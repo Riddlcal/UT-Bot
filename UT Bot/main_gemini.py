@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request
-from langchain.document_loaders import TextLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import GoogleGenerativeAIEmbeddings
+from langchain.document_loaders import DirectoryLoader  # Or PythonLoader
+from langchain.text_splitter import CharacterTextSplitter  # Or RegexTextSplitter
+from langchain.embeddings import SentenceEmbeddings  # Or HuggingFaceEmbeddings
 from pinecone import Pinecone
-from langchain.chains import VectorDBQA  # Import VectorDBQA
+from langchain.chains import VectorDBQA
 from langchain.prompts.prompt import PromptTemplate
 import time
 import re
@@ -27,9 +27,10 @@ chunked_documents = []
 for doc in documents:
     chunked_documents.extend(text_splitter.split_documents([doc]))
 
-# Initialize Gemini Embeddings
-os.environ['GOOGLE_API_KEY'] = 'AIzaSyDe6lC9YUhrCFsWz9qlp9bKRS7bciYQKqQ'  # Gemini API 
-embeddings = GoogleGenerativeAIEmbeddings()
+# Initialize Gemini Embeddings (Using Sentence Transformers)
+os.environ['GEMINI_API_KEY'] = 'AIzaSyDe6lC9YUhrCFsWz9qlp9bKRS7bciYQKqQ'  
+model = 'all-mpnet-base-v2'  # Choose a suitable Sentence Transformers model
+embeddings = SentenceEmbeddings(model=model)
 
 # Initialize Pinecone
 pinecone_api_key = os.getenv('PINECONE_API_KEY')
